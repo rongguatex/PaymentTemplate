@@ -1,0 +1,977 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB">
+
+<head>
+    <title>Checkout</title>
+    <link rel="stylesheet"
+        href="/SENTRY/PaymentGateway/Merchant/Administration/MerchantPages/88805393/PagoTarjetaGuatex/PagoTarjetaGuatex/css/blueprint/screen.css"
+        type="text/css" media="screen, projection">
+    <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8">
+    <script defer="defer" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body style="zoom: 100%;">
+    <form id="FrmCheckout" method="post" action="" style="background-color: #FFFFFF; margin-left: 5%" class="">
+        <input id="Downgrade3DS" name="Downgrade3DS" type="hidden" value="false">
+        <div class="">
+            <div class="span-12 prepend-6">
+                <!-- <div class="top" style="text-align: center">
+                    <img id="logoPagoTarjeta" alt="Merchant Image"
+                        src="/SENTRY/PaymentGateway/Merchant/Administration/MerchantPages/88805393/PagoTarjetaGuatex/PagoTarjetaGuatex/Images/Guatex%20sin%20fondo2.png">
+                </div> -->
+                <div id="cardDetail" class="fontzise">
+                    <fieldset>
+                        <legend>Detalle del pago</legend>
+                        <label for="Amount">Monto<span>*</span></label><br>
+                        <input type="text" readonly="readonly" id="Amount" name="Amount" tabindex="0" maxlength="12"
+                            size="20" style="border: 1px solid rgb(204, 204, 204);" value=""><br>
+                        <label for="CardName">Nombre de la tarjeta<span>*</span></label><br>
+                        <input type="text" id="CardName" name="CardName" tabindex="1" maxlength="25" size="50"
+                            autocomplete="off" style="border: 1px solid rgb(204, 204, 204);"><br>
+                        <label for="CardNo">Número de la tarjeta<span>*</span></label><br>
+                        <!-- <div id="is-relative"> -->
+                        <input type="text" id="CardNo" name="CardNo" placeholder="0000-0000-0000-0000" tabindex="1"
+                            maxlength="20" size="50" autocomplete="off"
+                            style="border: 1px solid rgb(204, 204, 204);"><br>
+                        <!-- </div> -->
+                        <label for="CardExpDate">Fecha de expiración </label><span
+                            class="mescodigo">(MMYY)</span><span>*</span><br>
+                        <input type="text" id="CardExpDate" name="CardExpDate" placeholder="00/00" tabindex="2"
+                            maxlength="5" size="10" style="border: 1px solid rgb(204, 204, 204);"><br>
+                        <label for="CardCVV2">Código de seguridad </label><span
+                            class="mescodigo">(CVV)</span><span>*</span><br>
+                        <input type="text" id="CardCVV2" name="CardCVV2" tabindex="3" maxlength="4" size="10"
+                            autocomplete="off" style="border: 1px solid rgb(204, 204, 204);"><br>
+                        <p>Tarjetas aceptadas <span>(únicamente)</span>.</p>
+                        <img src="/SENTRY/PaymentGateway/Merchant/Administration/MerchantPages/88805393/PagoTarjetaGuatex/PagoTarjetaGuatex/Images/weaccept.png"
+                            style="width: 130px;">
+                        <p>Campos requeridos<span>*</span></p>
+                    </fieldset>
+                    <div style="text-align: center" class="fontzise">
+                        <div id="alertaInfo" class="alert alert-danger alert-dismissible" style="display: none">
+                            <h5><i class="icon fas fa-ban"></i> Alerta!</h5>
+                            Por favor, verifique la información ingresada, complete los campos solicitados en el
+                            formulario.
+                        </div>
+                        <div id="btnValidacion">
+                            <input type="button" cursor:="" id="BtnRefrescar" name="BtnRefrescar"
+                                value="Volver a iniciar">
+                            <input type="button" cursor:="" id="BtnValidar" name="BtnValidar" value="Realizar Pago"
+                                onclick="validarCampos()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="span-21 prepend-5" style="background-color: #FFFFFF; margin-left: -7%;">
+        <div id="verificaInfo" class="fontzise" style="display: none;">
+            <fieldset>
+                <legend>Validación de datos</legend>
+                <!-- style="display: flex; justify-content: space-between; align-items: center;" -->
+                <div>
+                    <div class="font-tittle" style="color: gray; margin-top: 10px;">
+                        <!-- <h4 class="font-tittle" style="margin-bottom: 25px; ">
+                            Verifica tu información
+                        </h4> -->
+                        <!-- style="font-family: 'Trebuchet MS', sans-serif; color: gray; margin-top: 0; line-height: 1.2;" -->
+                        <!-- <h6 class=""> -->
+                        Revisa tus datos antes de que tu pago sea procesado.
+                        <!-- </h6> -->
+                    </div>
+                </div>
+
+                <div class="cards">
+
+                    <div class="data-pay" style="width: 47%;">
+                        <div>
+                            <br>
+
+                            <div>
+                                <h5 class="font-tittle" style="margin-bottom: 20px;"><strong>Datos de tarjeta</strong>
+                                </h5>
+                            </div>
+
+                            <div class="flex-container">
+                                <div class="flex-child">
+                                    <h5 class="font-tittle">Nombre</h5>
+                                </div>
+                                <div class="flex-child">
+                                    <span id="_cardName" class="font-data"></span>
+                                </div>
+                            </div>
+                            <div class="flex-container">
+                                <div class="flex-child">
+                                    <h5 class="font-tittle">Tarjeta</h5>
+                                </div>
+                                <div class="flex-child">
+                                    <span id="_cardNumber" class="font-data"></span>
+                                </div>
+                            </div>
+                            <div class="flex-container">
+                                <div class="flex-child">
+                                    <h5 class="font-tittle">Vencimiento</h5>
+                                </div>
+                                <div class="flex-child">
+                                    <span id="_cardExpDate" class="font-data"></span>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="flex-container">
+                                <div class="flex-child">
+                                    <h5 class="font-tittle">Monto a cancelar</h5>
+                                </div>
+                                <div class="flex-child">
+                                    <span id="_amount" class="font-amount"></span>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; margin-top: 15px;">
+                                <!-- display: none; -->
+                                <!-- style="text-align: center; margin-top: 35px; " -->
+                                <!-- <div style="text-align: center;"> -->
+                                <div>
+                                    <input type="button" id="BtnRegresar" name="BtnRegresar" value="Regresar"
+                                        onclick="regresar()" style="margin-right: 15px;">
+                                </div>
+                                <div id="btnConfirmarcion">
+                                    <input type="button" cursor:="" class="btn_Confirmar" pointer id="BtnConfirmar"
+                                        tabindex="5" name="BtnConfirmar" value="Confirmar Pago">
+                                </div>
+                                <!-- </div> -->
+                                <!-- style="text-align: right;" -->
+
+                            </div>
+
+                        </div>
+
+
+
+                    </div>
+                    <!-- style="min-height: 12em" -->
+                    <div class="card">
+                        <div class="card__info">
+                            <div class="card__logo"></div>
+                            <div class="card__chip">
+                                <svg class="card__chip-lines" role="img" width="20px" height="20px"
+                                    viewBox="0 0 100 100" aria-label="Chip">
+                                    <g opacity="0.8">
+                                        <polyline points="0,50 35,50" fill="none" stroke="#000" stroke-width="2" />
+                                        <polyline points="0,20 20,20 35,35" fill="none" stroke="#000"
+                                            stroke-width="2" />
+                                        <polyline points="50,0 50,35" fill="none" stroke="#000" stroke-width="2" />
+                                        <polyline points="65,35 80,20 100,20" fill="none" stroke="#000"
+                                            stroke-width="2" />
+                                        <polyline points="100,50 65,50" fill="none" stroke="#000" stroke-width="2" />
+                                        <polyline points="35,35 65,35 65,65 35,65 35,35" fill="none" stroke="#000"
+                                            stroke-width="2" />
+                                        <polyline points="0,80 20,80 35,65" fill="none" stroke="#000"
+                                            stroke-width="2" />
+                                        <polyline points="50,100 50,65" fill="none" stroke="#000" stroke-width="2" />
+                                        <polyline points="65,65 80,80 100,80" fill="none" stroke="#000"
+                                            stroke-width="2" />
+                                    </g>
+                                </svg>
+                                <div class="card__chip-texture"></div>
+                            </div>
+                            <div class="card__type"></div>
+                            <div class="card__number">
+                                <span class="card__digit-group">0000</span>-
+                                <span class="card__digit-group">0000</span>-
+                                <span class="card__digit-group">0000</span>-
+                                <span id="__lastNumbesCard" class="card__digit-group">9288</span>
+                            </div>
+                            <div class="card__valid-thru" aria-label="Valid thru">Valid<br>thru</div>
+                            <div id="__cardExpDate" class="card__exp-date"><time datetime="2038-01"></time></div>
+                            <div id="__cardName" class="card__name" aria-label="Dee Stroyer"></div>
+                            <!--<div class="card__vendor" role="img" aria-labelledby="card-vendor">
+          <span id="card-vendor" class="card__vendor-sr"></span>
+        </div>-->
+                        </div>
+                        <div class="card__texture"></div>
+                    </div>
+                </div>
+
+            </fieldset>
+            <div class="overlay" id="dialog-container">
+                <div class="popup">
+                    <div class="text-center">
+                        <h3>¿Está seguro que desea realizar el pago?</h3>
+                        <br>
+                        <button class="dialog-btn btn-cancel" id="cancel">Cancelar</button>
+                        <button class="dialog-btn btn-confirm" id="confirm">Confirmar</button>
+
+                        <input pointer id="BtnSubmit" disabled name="BtnSubmit" value="Confirmar Pago"
+                            form="FrmCheckout" type="submit" hidden="">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <style>
+        /*styles to dialog*/
+        .text-center {
+            margin-top: 25px;
+        }
+
+        .popup {
+            width: 50%;
+            padding: 15px;
+            left: 0;
+            margin-left: 7%;
+            border: 1px solid rgb(1, 82, 73);
+            border-radius: 10px;
+            color: rgb(1, 82, 73);
+            background: white;
+            position: absolute;
+            top: 35%;
+            box-shadow: 5px 5px 5px 5px #000;
+            z-index: 10001;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .overlay {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, .85);
+            z-index: 10000;
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            .popup {
+                width: 50.66666666%;
+                height: 25%;
+                margin-left: 28.666666%;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .popup {
+                height: 25%;
+                margin-left: 25%;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .popup {
+                width: 25%;
+                height: 25%;
+                margin-left: 33.33333%;
+            }
+        }
+
+        .dialog-btn {
+            color: white;
+            font-weight: 200;
+            border-radius: 10px;
+            height: 40px;
+            width: 25%;
+        }
+
+        .btn-confirm {
+            background-color: #007e33;
+            border: #007e33;
+        }
+
+        .btn-confirm:hover {
+            background-color: #00c851;
+            cursor: pointer;
+        }
+
+        .btn-cancel {
+            background-color: #cc0000;
+            border: #cc0000;
+        }
+
+        .btn-cancel:hover {
+            background-color: #ff4444;
+            cursor: pointer;
+        }
+
+
+        /*styles to form*/
+        #logoPagoTarjeta {
+            width: 25%;
+        }
+
+        input {
+            border: 1px solid grey;
+            border-radius: 8px;
+            padding: 5px;
+            color: #121B4C;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin: 10px 0px;
+        }
+
+        span {
+            color: crimson;
+            font-weight: bold;
+        }
+
+        p {
+            font-size: 11px;
+            margin: 0px 0px;
+        }
+
+        .mescodigo {
+            color: grey;
+            font-weight: bold;
+        }
+
+        .btn_Confirmar {
+            background-color: #007E33;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .btn_Confirmar:hover {
+            background-color: white;
+            color: #00C851;
+        }
+
+        #BtnValidar {
+            background-color: #121B4C;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        #BtnValidar:hover {
+            background-color: white;
+            color: #121B4C;
+        }
+
+        #BtnRefrescar {
+            background-color: white;
+            color: #CC0000;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            text-align: center;
+            margin-right: 10px;
+        }
+
+        #BtnRefrescar:hover {
+            background-color: #FF4444;
+            color: white;
+        }
+
+        #BtnRegresar {
+            background-color: white;
+            color: #CC0000;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            text-align: center;
+            /* margin-right: 10px; */
+        }
+
+        #BtnRegresar:hover {
+            background-color: #FF4444;
+            color: white;
+        }
+
+        @media only screen and (max-width: 768px) {
+            input {
+                width: 90%;
+            }
+
+            .prepend-6 {
+                width: 270px;
+                margin-left: -245px;
+            }
+
+            #logoPagoTarjeta {
+                width: 40%;
+            }
+        }
+
+        .flex-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .flex-child:first-child {
+            font-family: 'Times New Roman', serif;
+            margin-right: 20px;
+        }
+
+        .font-tittle {
+            font-family: "robotoregular", sans-serif, sans-serif;
+            font-weight: normal;
+            font-size: large;
+            color: #00377D;
+            margin: 0;
+            padding: 0;
+        }
+
+        .font-data {
+            text-transform: uppercase;
+            font-family: "robotoregular", sans-serif, sans-serif;
+            font-weight: normal;
+            color: #5F6E81;
+            margin: 40px;
+            text-align: right;
+            padding: 0;
+            font-size: 1.2em;
+        }
+
+        .font-amount {
+            font-family: "robotoregular", sans-serif, sans-serif;
+            font-weight: normal;
+            color: #5F6E81;
+            margin: 40px;
+            text-align: right;
+            padding: 0;
+            font-size: 1.6em;
+        }
+
+        #icon {
+            position: absolute;
+            display: block;
+            bottom: .8rem;
+            right: 0rem;
+
+            user-select: none;
+            cursor: pointer;
+        }
+
+        /* CARDS */
+
+        .cards {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .card {
+            width: 38%;
+            height: 14em;
+            margin-left: 3%;
+            padding: 20px;
+            max-width: 40%;
+            display: grid;
+            grid-template-rows: 20px 50px 1fr 50px;
+            border-radius: 10px;
+            box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25);
+            transition: all 0.2s;
+        }
+
+        .card:hover {
+            box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.4);
+            transform: scale(1.01);
+        }
+
+
+        :root {
+            --hue: 223;
+            --bg: hsl(var(--hue), 10%, 90%);
+            --fg: hsl(var(--hue), 10%, 10%);
+            --primary: hsl(var(--hue), 90%, 55%);
+            font-size: calc(20px + (30 - 20) * (100vw - 320px) / (1280 - 320));
+        }
+
+        .fontzise {
+            font-size: 14px;
+        }
+
+        .card,
+        .card__chip {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card,
+        .card__chip-texture,
+        .card__texture {
+            animation-duration: 3s;
+            animation-timing-function: ease-in-out;
+            animation-iteration-count: infinite;
+        }
+
+        .card {
+            animation-name: rotate;
+            background-color: var(--primary);
+            background-image:
+                radial-gradient(circle at 100% 0%, hsla(0, 0%, 100%, 0.08) 29.5%, hsla(0, 0%, 100%, 0) 30%),
+                radial-gradient(circle at 100% 0%, hsla(0, 0%, 100%, 0.08) 39.5%, hsla(0, 0%, 100%, 0) 40%),
+                radial-gradient(circle at 100% 0%, hsla(0, 0%, 100%, 0.08) 49.5%, hsla(0, 0%, 100%, 0) 50%);
+            border-radius: 0.5em;
+            box-shadow:
+                0 0 0 hsl(0, 0%, 80%),
+                0 0 0 hsl(0, 0%, 100%),
+                -0.2rem 0 0.75rem 0 hsla(0, 0%, 0%, 0.3);
+            color: hsl(0, 0%, 100%);
+            /* width: 8em;
+            height: 12.5em; */
+            transform: translate3d(0, 0, 0);
+        }
+
+        .card__info,
+        .card__chip-texture,
+        .card__texture {
+            position: absolute;
+        }
+
+        .card__chip-texture,
+        .card__texture {
+            animation-name: texture;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+        }
+
+        .card__info {
+            font: 0.75em/1 "DM Sans", sans-serif;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 0.75rem;
+            inset: 0;
+        }
+
+        .card__logo,
+        .card__number {
+            width: 100%;
+        }
+
+        .card__logo {
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        .card__chip {
+            background-image: linear-gradient(hsl(0, 0%, 70%), hsl(0, 0%, 80%));
+            border-radius: 0.2rem;
+            box-shadow: 0 0 0 0.05rem hsla(0, 0%, 0%, 0.5) inset;
+            width: 1.2rem;
+            height: 1.2rem;
+            transform: translate3d(0, 0, 0);
+        }
+
+        .card__chip-lines {
+            width: 100%;
+            height: auto;
+        }
+
+        .card__chip-texture {
+            background-image: linear-gradient(-80deg, hsla(0, 0%, 100%, 0), hsla(0, 0%, 100%, 0.6) 48% 52%, hsla(0, 0%, 100%, 0));
+        }
+
+        .card__type {
+            align-self: flex-end;
+            margin-left: auto;
+        }
+
+        .card__digit-group,
+        .card__exp-date,
+        .card__name {
+            background: linear-gradient(hsl(0, 0%, 100%), hsl(0, 0%, 85%) 15% 55%, hsl(0, 0%, 70%) 70%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-family: "Courier Prime", monospace;
+            filter: drop-shadow(0 0.05rem hsla(0, 0%, 0%, 0.3));
+        }
+
+        .card__number {
+            padding: 0.2rem;
+            font-size: 0.7rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .card__valid-thru,
+        .card__name {
+            text-transform: uppercase;
+        }
+
+        .card__valid-thru,
+        .card__exp-date {
+            margin-bottom: 0.25rem;
+            width: 50%;
+        }
+
+        .card__valid-thru {
+            font-size: 0.3rem;
+            padding-right: 0.25rem;
+            text-align: right;
+        }
+
+        .card__exp-date,
+        .card__name {
+            font-size: 0.6rem;
+        }
+
+        .card__exp-date {
+            padding-left: 0.25rem;
+        }
+
+        .card__name {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            width: 6.25rem;
+        }
+
+        .card__vendor,
+        .card__vendor:before,
+        .card__vendor:after {
+            position: absolute;
+        }
+
+        .card__vendor {
+            right: 0.375rem;
+            bottom: 0.375rem;
+            width: 2.55rem;
+            height: 1.5rem;
+        }
+
+        .card__vendor:before,
+        .card__vendor:after {
+            border-radius: 50%;
+            content: "";
+            display: block;
+            top: 0;
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .card__vendor:before {
+            background-color: #e71d1a;
+            left: 0;
+        }
+
+        .card__vendor:after {
+            background-color: #fa5e03;
+            box-shadow: -1.05rem 0 0 #f59d1a inset;
+            right: 0;
+        }
+
+        .card__vendor-sr {
+            clip: rect(1px, 1px, 1px, 1px);
+            overflow: hidden;
+            position: absolute;
+            width: 1px;
+            height: 1px;
+        }
+
+        .card__texture {
+            animation-name: texture;
+            background-image: linear-gradient(-80deg, hsla(0, 0%, 100%, 0.3) 25%, hsla(0, 0%, 100%, 0) 45%);
+        }
+
+        /* Dark theme */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: hsl(var(--hue), 10%, 30%);
+                --fg: hsl(var(--hue), 10%, 90%);
+            }
+        }
+
+        /* Animation */
+        @keyframes rotate {
+
+            from,
+            to {
+                animation-timing-function: ease-in;
+                box-shadow:
+                    0 0 0 hsl(0, 0%, 80%),
+                    0.1rem 0 0 hsl(0, 0%, 100%),
+                    -0.2rem 0 0.75rem 0 hsla(0, 0%, 0%, 0.3);
+                transform: rotateY(-10deg);
+            }
+
+            25%,
+            75% {
+                animation-timing-function: ease-out;
+                box-shadow:
+                    0 0 0 hsl(0, 0%, 80%),
+                    0 0 0 hsl(0, 0%, 100%),
+                    -0.25rem -0.05rem 1rem 0.15rem hsla(0, 0%, 0%, 0.3);
+                transform: rotateY(0deg);
+            }
+
+            50% {
+                animation-timing-function: ease-in;
+                box-shadow:
+                    -0.1rem 0 0 hsl(0, 0%, 80%),
+                    0 0 0 hsl(0, 0%, 100%),
+                    -0.3rem -0.1rem 1.5rem 0.3rem hsla(0, 0%, 0%, 0.3);
+                transform: rotateY(10deg);
+            }
+        }
+
+        @keyframes texture {
+
+            from,
+            to {
+                transform: translate3d(0, 0, 0);
+            }
+
+            50% {
+                transform: translate3d(-50%, 0, 0);
+            }
+        }
+    </style>
+    <script type="text/javascript">
+
+        document.getElementById("BtnRefrescar").onclick = function () {
+
+            window.parent.postMessage({ status: 'recargar' }, '*');
+        }
+
+        function regresar() {
+            // BtnRegresar
+            var cardDetailsDiv = document.getElementById("cardDetail");
+            var btnValidacionDiv = document.getElementById("btnValidacion");
+            var verificaInfoDiv = document.getElementById("verificaInfo");
+            var btnConfirmarcion = document.getElementById("btnConfirmarcion");
+
+            btnValidacionDiv.style.display = "block";
+            cardDetailsDiv.style.display = "block";
+            verificaInfoDiv.style.display = "none";
+            btnConfirmarcion.style.display = "none";
+        }
+
+        document.getElementById("BtnSubmit").disabled = true;
+
+        document.getElementById("Amount").style.border = "1px solid #ccc";
+        document.getElementById("CardName").style.border = "1px solid #ccc";
+        document.getElementById("CardNo").style.border = "1px solid #ccc";
+        document.getElementById("CardExpDate").style.border = "1px solid #ccc";
+        document.getElementById("CardCVV2").style.border = "1px solid #ccc";
+
+        const nocard = document.getElementById('CardNo');
+        const cardExpDate = document.getElementById('CardExpDate');
+
+        cardExpDate.oninput = (e) => {
+            try {
+                let cursorPos = e.target.selectionStart;
+                let formattedInput = autoFormatCardExpDate(e.target.value);
+
+                e.target.value = formattedInput;
+                let isBackspace = (e?.inputType === 'delete');
+                let nextCursorPosition = getNextDigitPosition(formattedInput, cursorPos, isBackspace);
+
+                cardExpDate.setSelectionRange(nextCursorPosition + 1, nextCursorPosition + 1);
+            } catch (err) {
+                // console.log("Error formatting card exp date: ", err);
+            }
+        }
+
+        nocard.oninput = (e) => {
+            try {
+                let cursorPos = e.target.selectionStart;
+                let formattedInput = autoFormatCreditCardNumber(e.target.value);
+
+                e.target.value = formattedInput;
+                let isBackspace = (e?.inputType === 'delete');
+                let nextCursorPosition = getNextDigitPosition(formattedInput, cursorPos, isBackspace);
+
+                nocard.setSelectionRange(nextCursorPosition + 1, nextCursorPosition + 1);
+
+            } catch (err) {
+                console.error("Error formatting credit card number: ", err);
+            }
+        }
+
+        function getNextDigitPosition(input, cursorPos, isBackspace) {
+            if (isBackspace) {
+                for (let i = cursorPos - 1; i > 0; i--) {
+                    if (/\d/.test(input[i])) {
+                        return i;
+                    }
+                }
+            } else {
+                for (let i = cursorPos - 1; i < input.length; i++) {
+                    if (/\d/.test(input[i])) {
+                        return i;
+                    }
+                }
+            }
+
+            return cursorPos;
+        }
+
+        function autoFormatCreditCardNumber(creditCardNumber) {
+            var cleaned = ("" + creditCardNumber).replace(/\D/g, "");
+            var match = cleaned.match(/^(\d{0,4})?(\d{0,4})?(\d{0,4})?(\d{0,4})?/);
+            return [match[1], match[2], match[3], match[4]].filter(Boolean).join("-");
+        }
+
+        function autoFormatCardExpDate(cardExpDate) {
+            var cleane = ("" + cardExpDate).replace(/\D/g, "");
+            var match = cleane.match(/^(\d{0,2})?(\d{0,2})?/);
+            return [match[1], match[2]].filter(Boolean).join("/");
+        }
+
+        function validarCampos() {
+            if ($("#Amount").val() === "") {
+                document.getElementById("Amount").style.border = "1px solid red";
+                $("#alertaInfo").fadeIn();
+                val1 = "false";
+
+            } else {
+                document.getElementById("Amount").style.border = "1px solid #ccc";
+                $("#alertaInfo").fadeOut();
+                val1 = "true";
+            }
+
+            if ($("#CardName").val() === "") {
+                document.getElementById("CardName").style.border = "1px solid red";
+                $("#alertaInfo").fadeIn();
+                val2 = "false";
+            }
+            else {
+                document.getElementById("CardName").style.border = "1px solid #ccc";
+                $("#alertaInfo").fadeOut();
+                val2 = "true";
+            }
+            if ($("#CardNo").val() === "") {
+                document.getElementById("CardNo").style.border = "1px solid red";
+                $("#alertaInfo").fadeIn();
+                val3 = "false";
+            }
+            else {
+                document.getElementById("CardNo").style.border = "1px solid #ccc";
+                $("#alertaInfo").fadeOut();
+                val3 = "true";
+            }
+            if ($("#CardExpDate").val() === "") {
+                document.getElementById("CardExpDate").style.border = "1px solid red";
+                $("#alertaInfo").fadeIn();
+                val4 = "false";
+            }
+            else {
+                document.getElementById("CardExpDate").style.border = "1px solid #ccc";
+                $("#alertaInfo").fadeOut();
+                val4 = "true";
+            }
+            if ($("#CardCVV2").val() === "") {
+                document.getElementById("CardCVV2").style.border = "1px solid red";
+                $("#alertaInfo").fadeIn();
+                val5 = "false";
+            }
+            else {
+                document.getElementById("CardCVV2").style.border = "1px solid #ccc";
+                $("#alertaInfo").fadeOut();
+                val5 = "true";
+            }
+
+            if (val1 === "true" && val2 === "true" && val3 === "true" && val4 === "true" && val5 === "true") {
+
+                $("#alertaInfo").fadeOut();
+
+                var cardDetailsDiv = document.getElementById("cardDetail");
+                var btnValidacionDiv = document.getElementById("btnValidacion");
+                var verificaInfoDiv = document.getElementById("verificaInfo");
+                var btnConfirmarcion = document.getElementById("btnConfirmarcion");
+
+                btnValidacionDiv.style.display = "none";
+                cardDetailsDiv.style.display = "none";
+                verificaInfoDiv.style.display = "block";
+                btnConfirmarcion.style.display = "block";
+
+                const amount = document.getElementById("Amount").value;
+                const cardName = document.getElementById("CardName").value;
+                const cardNumber = document.getElementById("CardNo").value;
+                const cardExpDate = document.getElementById("CardExpDate").value;
+
+                const lastFourDigits = cardNumber.slice(-4);
+
+                document.getElementById("_cardName").innerText = cardName;
+                document.getElementById("__cardName").innerText = cardName;
+                document.getElementById("_cardNumber").innerText = `**** ${lastFourDigits}`;
+                document.getElementById("_cardExpDate").innerText = cardExpDate;
+                document.getElementById("__cardExpDate").innerText = cardExpDate;
+                document.getElementById("_amount").innerText = `Q.${amount}`;
+                document.getElementById("__lastNumbesCard").innerText = lastFourDigits;
+
+            }
+            else {
+                $("#alertaInfo").fadeIn();
+            }
+        }
+
+        document.getElementById("BtnConfirmar").onclick = function () { show_dialog() };
+
+        var overlayme = document.getElementById("dialog-container");
+
+        function show_dialog() {
+            overlayme.style.display = "block";
+        }
+
+        document.getElementById("confirm").onclick = function () { confirm() };
+
+        function confirm() {
+            overlayme.style.display = "none";
+            // console.log("you pressed confirm button");
+            try {
+                document.getElementById("BtnSubmit").disabled = false;
+                $("#BtnSubmit").click();
+            } catch (error) {
+                // console.log("Error al realizar el envio de datos: ", error);
+            }
+        }
+
+        document.getElementById("cancel").onclick = function () { cancel() };
+
+        function cancel() {
+            overlayme.style.display = "none";
+            // console.log("you pressed cancel button");
+        }
+
+        $(document).ready(function () {
+
+            $("#FrmCheckout").on("submit", function () {
+                //reads entered card number from an input on the page
+                var cardNum = $("#CardNo").val();
+
+                // for Discovery and AMEX a 3ds auth is downgraded to regular auth
+                if ((cardNum && cardNum.indexOf("6") === 0) //Discover
+                    || (cardNum && cardNum.indexOf("34") === 0) //AMEX
+                    || (cardNum && cardNum.indexOf("37") === 0) //AMEX
+                    || (cardNum && cardNum.indexOf("777774") === 0) //JNCB
+                ) {
+                    $("#Downgrade3DS").val("true");
+                    $("#FrmCheckout").attr("action", "/MerchantPages/HostedPage.aspx")
+                }
+            });
+            // Escuchar el evento de envío del formulario
+            document.getElementById('FrmCheckout').addEventListener('submit', function (event) {
+                // validaciones o acción adicional antes de enviar el formulario
+                event.preventDefault();
+
+                $("#CardNo").val($("#CardNo").val().replace(/-/g, ""));
+                $("#CardExpDate").val($("#CardExpDate").val().replace(/\D/g, ""));
+                // Envía un mensaje al documento principal indicando que el formulario ha sido enviado
+                window.parent.postMessage({ status: 'enviado' }, '*');
+                this.submit();
+            });
+        });
+    </script>
+</body>
+
+</html>
